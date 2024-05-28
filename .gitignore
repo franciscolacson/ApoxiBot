@@ -1,14 +1,6 @@
-# Ignore environment variable files
 .env
-
-# Ignore node_modules directory
 node_modules/
-
-# Ignore log files
 *.log
-
-# Ignore other sensitive or temporary files
 .DS_Store
-
-# Ignore bat files
 *.bat
+.vscode/
