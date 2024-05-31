@@ -11,7 +11,7 @@
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
  */
 
-const { splitMessage } = require('../utils/splitMessage');
+const { splitMessage } = require('../../utils/splitMessage');
 
 async function getGamesHistory(interaction, state) {
   const { gamesHistory } = state;

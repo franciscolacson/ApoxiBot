@@ -12,7 +12,7 @@
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
  */
 
-const { saveGameQueue } = require('../utils/fileOperations');
+const { saveGameQueue } = require('../../utils/fileOperations');
 
 async function addGame(interaction, state) {
   const { gameQueue, saveGameQueue } = state;

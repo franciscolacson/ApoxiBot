@@ -13,7 +13,7 @@
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
  */
 
-const { shortenUrl } = require('../utils/shortenUrl');
+const { shortenUrl } = require('../../utils/shortenUrl');
 
 async function getWheel(interaction, state) {
   const { gameQueue, saveGameQueue } = state;
