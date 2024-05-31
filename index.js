@@ -5,6 +5,22 @@ require('dotenv').config();
 const { setActivity, setBotOnline } = require('./utils/setActivity');
 const { loadGameQueue, saveGameQueue, loadGameHistory, saveGameHistory } = require('./utils/fileOperations');
 
+const logFilePath = path.join(__dirname, 'bot.log');
+
+function log(message) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `${timestamp} - ${message}\n`;
+  fs.appendFileSync(logFilePath, logMessage);
+  console.log(logMessage);
+}
+
+function logError(error) {
+  const timestamp = new Date().toISOString();
+  const errorMessage = `${timestamp} - ERROR: ${error.stack || error}\n`;
+  fs.appendFileSync(logFilePath, errorMessage);
+  console.error(errorMessage);
+}
+
 /**
  * Initialize the Discord client with the required intents.
  */
@@ -178,17 +194,17 @@ const rest = new REST({ version: '10' }).setToken(DISCORD_BOT_TOKEN);
 // Register the commands with Discord
 (async () => {
   try {
-    console.log('Started refreshing application (/) commands.');
+    log('Started refreshing application (/) commands.');
     await rest.put(Routes.applicationCommands(APPLICATION_ID), { body: commands });
-    console.log('Successfully reloaded application (/) commands.');
+    log('Successfully reloaded application (/) commands.');
   } catch (error) {
-    console.error(error);
+    logError(error);
   }
 })();
 
 // Event handler for when the client is ready
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  log(`Logged in as ${client.user.tag}!`);
   gameQueue = loadGameQueue();
   gamesHistory = loadGameHistory();
   setActivity(client);
@@ -214,24 +230,26 @@ client.on('interactionCreate', async interaction => {
     APOXITY_USER_ID,
   };
 
+  const gamehop_dir = './commands/gamehop/';
+
   // Define the command handlers by mapping subcommands to their respective functions
   const commandHandlers = {
-    suggest: require('./commands/addGame').addGame,
-    remove: require('./commands/removeGame').removeGame,
-    suggestions: require('./commands/getGameSuggestions').getGameSuggestions,
-    suggestedby: require('./commands/getGameSuggestedByUser').getGameSuggestedByUser,
-    wheel: require('./commands/getWheel').getWheel,
-    wheellastspun: require('./commands/getWheelLastSpun').getWheelLastSpun,
-    removegamesbyuser: require('./commands/removeGamesSuggestedByUser').removeGamesSuggestedByUser,
-    suggestedbyuser: require('./commands/getGamesSuggestedByUser').getGamesSuggestedByUser,
-    chosengame: require('./commands/setChosenGame').setChosenGame,
-    currentgame: require('./commands/getCurrentGame').getCurrentGame,
-    veto: require('./commands/addVetoGame').addVetoGame,
-    vetos: require('./commands/getVetoes').getVetoes,
-    gameshistory: require('./commands/getGamesHistory').getGamesHistory,
-    vetoed: require('./commands/setGameVetoed').setGameVetoed,
-    clear: require('./commands/resetGamehop').resetGamehop,
-    help: require('./commands/help').handleHelp,
+    suggest: require(`${gamehop_dir}addGame`).addGame,
+    remove: require(`${gamehop_dir}removeGame`).removeGame,
+    suggestions: require(`${gamehop_dir}getGameSuggestions`).getGameSuggestions,
+    suggestedby: require(`${gamehop_dir}getGameSuggestedByUser`).getGameSuggestedByUser,
+    wheel: require(`${gamehop_dir}getWheel`).getWheel,
+    wheellastspun: require(`${gamehop_dir}getWheelLastSpun`).getWheelLastSpun,
+    removegamesbyuser: require(`${gamehop_dir}removeGamesSuggestedByUser`).removeGamesSuggestedByUser,
+    suggestedbyuser: require(`${gamehop_dir}getGamesSuggestedByUser`).getGamesSuggestedByUser,
+    chosengame: require(`${gamehop_dir}setChosenGame`).setChosenGame,
+    currentgame: require(`${gamehop_dir}getCurrentGame`).getCurrentGame,
+    veto: require(`${gamehop_dir}addVetoGame`).addVetoGame,
+    vetos: require(`${gamehop_dir}getVetoes`).getVetoes,
+    gameshistory: require(`${gamehop_dir}getGamesHistory`).getGamesHistory,
+    vetoed: require(`${gamehop_dir}setGameVetoed`).setGameVetoed,
+    clear: require(`${gamehop_dir}resetGamehop`).resetGamehop,
+    help: require(`${gamehop_dir}help`).handleHelp,
   };
 
   // Check if the command is 'gh'
@@ -243,10 +261,11 @@ client.on('interactionCreate', async interaction => {
 
     if (handler) {
       try {
+        log(`Executing command: ${subCommand}`);
         // Execute the handler function
         await handler(interaction, state);
       } catch (error) {
-        console.error(error);
+        logError(error);
         await interaction.reply('There was an error executing that command.');
       }
     } else {
@@ -257,4 +276,6 @@ client.on('interactionCreate', async interaction => {
 });
 
 // Log the bot in using the token
-client.login(DISCORD_BOT_TOKEN);
+client.login(DISCORD_BOT_TOKEN).then(() => {
+  log('Bot logged in successfully');
+}).catch(logError);
