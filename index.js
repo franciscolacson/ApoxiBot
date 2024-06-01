@@ -264,6 +264,14 @@ client.on('interactionCreate', async interaction => {
         log(`Executing command: ${subCommand}`);
         // Execute the handler function
         await handler(interaction, state);
+
+        // update global state after command execution
+        gameQueue = state.gameQueue;
+        lastWheelSpun = state.lastWheelSpun;
+        currentGame = state.currentGame;
+        gameChosenTime = state.gameChosenTime;
+        vetoList = state.vetoList;
+        gamesHistory = state.gamesHistory;
       } catch (error) {
         logError(error);
         await interaction.reply('There was an error executing that command.');
