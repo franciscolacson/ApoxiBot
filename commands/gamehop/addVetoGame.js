@@ -8,13 +8,12 @@
  * @param {Object} state - The state object that includes the current game, veto list, and the saveVetoList function for persisting changes.
  * @param {string} state.currentGame - The name of the current game being played.
  * @param {Array} state.vetoList - An array that holds the list of user IDs who have vetoed the current game.
- * @param {Function} state.saveVetoList - A function that saves the current state of the veto list.
  * 
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
  */
 
 async function addVetoGame(interaction, state) {
-  const { currentGame, vetoList, saveVetoList } = state;
+  const { currentGame, vetoList } = state;
 
   // Check if there is a current game being played
   if (!currentGame) {
@@ -30,7 +29,6 @@ async function addVetoGame(interaction, state) {
 
   // Add the user's ID to the veto list and save the updated list
   vetoList.push(interaction.user.id);
-  saveVetoList(vetoList);
 
   // Respond to the user confirming their veto
   await interaction.reply(`<@${interaction.user.id}> has vetoed the current game "${currentGame}".`);
