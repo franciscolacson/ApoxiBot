@@ -42,7 +42,17 @@ async function getVetoes(interaction, state) {
   `;
 
   // Reply with the veto details
-  await interaction.reply(vetosMessage);
+  try {
+    await interaction.reply(vetosMessage);
+  } catch (error) {
+    if (error.code === 40060) {
+      // Interaction has already been acknowledged, follow up instead
+      await interaction.followUp(vetosMessage);
+    } else {
+      // Log the error for debugging
+      console.error('Error sending interaction reply:', error);
+    }
+  }
 }
 
 module.exports = { getVetoes };
