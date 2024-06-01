@@ -6,21 +6,21 @@
  * 
  * @param {Object} interaction - The interaction object from the Discord API, which includes details about the user's input and interaction context.
  * @param {Object} state - The state object that includes the time when the wheel was last spun.
- * @param {Date} state.gameChosenTime - The time when the wheel was last spun.
+ * @param {Date} state.lastWheelSpun - The time when the wheel was last spun.
  * 
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
  */
 
 async function getWheelLastSpun(interaction, state) {
   // Check if the wheel has been spun yet
-  if (!state.gameChosenTime) {
+  if (!state.lastWheelSpun) {
     await interaction.reply('The wheel has not been spun yet.');
     return;
   }
 
   // Calculate the time difference between now and when the wheel was last spun
   const now = new Date();
-  const diff = Math.floor((now - state.gameChosenTime) / 1000);
+  const diff = Math.floor((now - state.lastWheelSpun) / 1000);
   const minutes = Math.floor(diff / 60);
   const seconds = diff % 60;
 
