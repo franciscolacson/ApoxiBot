@@ -7,7 +7,6 @@
  * @param {Object} interaction - The interaction object from the Discord API, which includes details about the user's input and interaction context.
  * @param {Object} state - The state object that includes the current game queue and functions to save the state.
  * @param {Array} state.gameQueue - An array that holds the list of game suggestions.
- * @param {Function} state.saveGameQueue - A function that saves the current state of the game queue.
  * @param {Function} state.shortenUrl - A function that shortens a given URL.
  * 
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
@@ -16,7 +15,7 @@
 const { shortenUrl } = require('../../utils/shortenUrl');
 
 async function getWheel(interaction, state) {
-  const { gameQueue, saveGameQueue } = state;
+  const { gameQueue } = state;
 
   // Log the request to spin the wheel
   console.log(`<@${interaction.user.id}> spun the wheel!`);
@@ -37,6 +36,7 @@ async function getWheel(interaction, state) {
 
   // Update the state with the last time the wheel was spun
   state.lastWheelSpun = new Date();
+  console.log('Updated lastWheelSpun:', state.lastWheelSpun); // Added log for debugging
 
   // Reply with the shortened URL for the wheel
   await interaction.reply(`Spin the wheel to decide: ${shortenedWheelUrl}`);
