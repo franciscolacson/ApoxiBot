@@ -12,13 +12,16 @@
  * @returns {Promise<void>} - This function does not return any value but sends a response to the user.
  */
 
+const MAX_GAME_SUGGESTIONS = 100;
+const MAX_USER_SUGGESTIONS = 10;
+
 const { saveGameQueue } = require('../../utils/fileOperations');
 
 async function addGame(interaction, state) {
   const { gameQueue, saveGameQueue } = state;
 
   // Check if the game queue has reached its maximum capacity
-  if (gameQueue.length >= 100) {
+  if (gameQueue.length >= MAX_GAME_SUGGESTIONS) {
     await interaction.reply('Sorry, the maximum number of game suggestions (100) has been reached.');
     return;
   }
@@ -34,11 +37,20 @@ async function addGame(interaction, state) {
     // If it's a duplicate, inform the user
     await interaction.reply(`The game "${gameSuggestion}" has already been suggested.`);
   } else {
-    // If it's not a duplicate, add the suggestion to the queue and save the updated queue
-    gameQueue.push([gameSuggestion, interaction.user.id]);
-    saveGameQueue(gameQueue);
-    // Respond to the user confirming their suggestion
-    await interaction.reply(`Game suggested! ${gameSuggestion}, suggested by <@${interaction.user.id}>.`);
+    // Count the number of suggestions by this user
+    const userSuggestionsCount = gameQueue.filter(entry => entry[1] === userId).length;
+
+    if (userSuggestionsCount >= MAX_USER_SUGGESTIONS) {
+      // If the user has reached their suggestion limit, inform them
+      await interaction.reply(`You, ${username}, have reached the maximum number of suggestions (${MAX_USER_SUGGESTIONS}).`);
+      return;
+    } else {
+      gameQueue.push([gameSuggestion, interaction.user.id]);
+      saveGameQueue(gameQueue);
+
+      // Respond to the user confirming their suggestion
+      await interaction.reply(`Game suggested! ${gameSuggestion}, suggested by <@${interaction.user.id}>.`);
+      }
   }
 }
 
