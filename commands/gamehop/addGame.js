@@ -42,7 +42,7 @@ async function addGame(interaction, state) {
 
     if (userSuggestionsCount >= MAX_USER_SUGGESTIONS) {
       // If the user has reached their suggestion limit, inform them
-      await interaction.reply(`You, ${interaction.user.id}, have reached the maximum number of suggestions (${MAX_USER_SUGGESTIONS}).`);
+      await interaction.reply(`You, <@${interaction.user.id}, have reached the maximum number of suggestions (${MAX_USER_SUGGESTIONS}).`);
       return;
     } else {
       gameQueue.push([gameSuggestion, interaction.user.id]);
